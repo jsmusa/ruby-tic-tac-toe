@@ -1,16 +1,20 @@
 class Board
-  attr_reader :array
+  attr_reader :array, :valid
 
   def initialize
-    @array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] 
+    @array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
   end
 
   def change(position, symbol)
+    @valid = false
     @array.map! do |numbers|
       unless numbers.index(position) == nil
+        @valid = true
         numbers[numbers.index(position)] = symbol
         numbers 
-      else numbers end
+      else 
+        numbers 
+      end
     end
   end
 
@@ -82,15 +86,17 @@ class Game
       puts "Enter your move, #{@current_player[0].name}:"
       @number = gets.chomp.to_i
       @board.change(@number, @current_player[0].symbol)
-      
       show()
-      is_over?()
-      @current_player.reverse! 
+
+      if @board.valid == true
+        is_over?()
+        @current_player.reverse!
+      else puts "Invalid Input", "\n" end
     
-      if (@game_over == true)
+      if @game_over == true
         puts "#{@current_player[1].name} wins!"
         break
-      elsif (@board.is_full? == true)
+      elsif @board.is_full? == true
         puts "Game Over! It's a tie game!"
         break
       end
