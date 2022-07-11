@@ -1,54 +1,87 @@
 class Board
+  attr_reader :array
+
   def initialize
-    @array = [[2, 1], [7, 2], [6, 3], [9, 4],[5, 5], [1, 6], [4, 7], [3, 8], [8, 9]] 
+    @array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] 
   end
 
-  def pick(number)
-    @array[number - 1][0]
+  def change(position, symbol)
+    @array.map! do |numbers|
+      unless numbers.index(position) == nil
+        numbers[numbers.index(position)] = symbol
+        numbers 
+      else numbers end
+    end
   end
 
   def display
-    @array.each_with_index do |inner_array, idx|
-      puts if (idx + 1) % 3 == 1
-      print "| #{inner_array[1]} | "
+    @array.each do |inner_array|
+      puts
+      print inner_array.join(" | ")
     end
+
     puts
   end
 end
 
 class Player
-  attr_accessor :name
+  attr_reader :name, :symbol
 
-  def initialize(name)
+  def initialize(name, symbol)
     @name = name
-    @array = []
-  end
-
-  def add_to_array(number)
-    @array.push(number)
+    @symbol = symbol
   end
 end
 
 class Game
   def initialize
-    @player_one = create_player(1)
-    @player_two = create_player(2)
+    @player_one = create_player(1, "X")
+    @player_two = create_player(2, "O")
     @board = Board.new
+    @current_player = [@player_one, @player_two]
+    @game_over = false
   end
 
-  def create_player(number)
+  def create_player(number, symbol)
     print "Player #{number}: "
     name = gets.chomp
-    Player.new(name)
+    Player.new(name, symbol)
   end
 
   def show
     @board.display
+    puts
+  end
+
+  def check(array)
+    array.each do |inner_array|
+      if inner_array.uniq.length == 1 then return true end
+    end
+
+    false
+  end
+
+  def is_over?
+    check(@board.array.transpose) || check(@board.array)
+  end
+
+  def play
+    loop do
+      puts "Enter your move, #{@current_player[0].name}:"
+      @number = gets.chomp.to_i
+      @board.change(@number, @current_player[0].symbol)
+      
+      show()
+      @current_player.reverse! 
+    
+      break if (is_over?() == true)
+    end
   end
 end
 
 my_game = Game.new
 my_game.show
+my_game.play
 # user inputs name
 # creates user array
 # other user inputs name
