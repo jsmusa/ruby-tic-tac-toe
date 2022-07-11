@@ -22,6 +22,10 @@ class Board
 
     puts
   end
+
+  def is_full?
+    @array.flatten.none?(Integer)
+  end
 end
 
 class Player
@@ -61,8 +65,16 @@ class Game
     false
   end
 
+  def diagonal_check(array)
+    if [array[0][0], array[1][1], array[2][2]].uniq.size == 1 || 
+       [array[0][2], array[1][1], array[2][0]].uniq.size == 1
+      return true
+    else false end
+  end
+
   def is_over?
-    check(@board.array.transpose) || check(@board.array)
+    @game_over = check(@board.array.transpose) || check(@board.array) ||
+                 diagonal_check(@board.array)
   end
 
   def play
@@ -72,9 +84,16 @@ class Game
       @board.change(@number, @current_player[0].symbol)
       
       show()
+      is_over?()
       @current_player.reverse! 
     
-      break if (is_over?() == true)
+      if (@game_over == true)
+        puts "#{@current_player[1].name} wins!"
+        break
+      elsif (@board.is_full? == true)
+        puts "Game Over! It's a tie game!"
+        break
+      end
     end
   end
 end
@@ -82,13 +101,3 @@ end
 my_game = Game.new
 my_game.show
 my_game.play
-# user inputs name
-# creates user array
-# other user inputs name
-# creates other user array 
-# start game
-# user inputs move
-# move gets stored in user array
-# other user inputs move
-# move gets stored in other user array
-# repeat until somebody wins
