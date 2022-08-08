@@ -1,20 +1,15 @@
 class Board
-  attr_reader :array, :valid
+  attr_reader :array
 
   def initialize
     @array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
   end
 
   def change(position, symbol)
-    @valid = false
     @array.map! do |numbers|
-      unless numbers.index(position) == nil
-        @valid = true
-        numbers[numbers.index(position)] = symbol
-        numbers 
-      else 
-        numbers 
-      end
+      numbers[numbers.index(position)] = symbol if numbers.index(position)
+
+      numbers
     end
   end
 
@@ -27,7 +22,7 @@ class Board
     puts
   end
 
-  def is_full?
+  def full?
     @array.flatten.none?(Integer)
   end
 end
@@ -63,20 +58,22 @@ class Game
 
   def check(array)
     array.each do |inner_array|
-      if inner_array.uniq.length == 1 then return true end
+      return true if inner_array.uniq.length == 1
     end
 
     false
   end
 
   def diagonal_check(array)
-    if [array[0][0], array[1][1], array[2][2]].uniq.size == 1 || 
+    if [array[0][0], array[1][1], array[2][2]].uniq.size == 1 ||
        [array[0][2], array[1][1], array[2][0]].uniq.size == 1
-      return true
-    else false end
+      true
+    else
+      false
+    end
   end
 
-  def is_over?
+  def over?
     @game_over = check(@board.array.transpose) || check(@board.array) ||
                  diagonal_check(@board.array)
   end
@@ -91,7 +88,9 @@ class Game
       if @board.valid == true
         is_over?()
         @current_player.reverse!
-      else puts "Invalid Input", "\n" end
+      else 
+        puts "Invalid Input", "\n"
+      end
     
       if @game_over == true
         puts "#{@current_player[1].name} wins!"
