@@ -16,10 +16,10 @@ class Board
   def display
     @array.each do |inner_array|
       puts
-      print inner_array.join(" | ")
+      print inner_array.join(' | ')
     end
 
-    puts
+    puts "\n\n"
   end
 
   def full?
@@ -38,8 +38,8 @@ end
 
 class Game
   def initialize
-    @player_one = create_player(1, "X")
-    @player_two = create_player(2, "O")
+    @player_one = create_player(1, 'X')
+    @player_two = create_player(2, 'O')
     @board = Board.new
     @current_player = [@player_one, @player_two]
     @game_over = false
@@ -49,11 +49,6 @@ class Game
     print "Player #{number}: "
     name = gets.chomp
     Player.new(name, symbol)
-  end
-
-  def show
-    @board.display
-    puts
   end
 
   def check(array)
@@ -78,31 +73,36 @@ class Game
                  diagonal_check(@board.array)
   end
 
-  def play
+  def player_input
     loop do
       puts "Enter your move, #{@current_player[0].name}:"
-      @number = gets.chomp.to_i
-      @board.change(@number, @current_player[0].symbol)
-      show()
+      number = gets.chomp
+      break number.to_i if number.match?(/[0-9]/)
 
-      if @board.valid == true
-        is_over?()
-        @current_player.reverse!
-      else 
-        puts "Invalid Input", "\n"
-      end
-    
-      if @game_over == true
+      puts 'Invalid input, please try again'
+    end
+  end
+
+  def play
+    loop do
+      @board.display
+
+      if over?
         puts "#{@current_player[1].name} wins!"
         break
-      elsif @board.is_full? == true
-        puts "Game Over! It's a tie game!"
+      elsif @board.full?
+        puts 'Game Over! It\'s a tie game!'
         break
       end
+
+      number = player_input
+      @board.change(number, @current_player[0].symbol)
+
+      over?
+      @current_player.reverse!
     end
   end
 end
 
 my_game = Game.new
-my_game.show
 my_game.play
