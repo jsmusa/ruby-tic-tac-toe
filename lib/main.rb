@@ -1,13 +1,19 @@
 class Board
-  attr_reader :array
+  attr_reader :array, :valid_move
 
   def initialize
     @array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    @valid_move = false
   end
 
   def change(position, symbol)
+    @valid_move = false
+
     @array.map! do |numbers|
-      numbers[numbers.index(position)] = symbol if numbers.index(position)
+      if numbers.index(position)
+        numbers[numbers.index(position)] = symbol
+        @valid_move = true
+      end
 
       numbers
     end
@@ -51,14 +57,6 @@ class Game
     Player.new(name, symbol)
   end
 
-  def check(array)
-    array.each do |inner_array|
-      return true if inner_array.uniq.length == 1
-    end
-
-    false
-  end
-
   def diagonal_check(array)
     if [array[0][0], array[1][1], array[2][2]].uniq.size == 1 ||
        [array[0][2], array[1][1], array[2][0]].uniq.size == 1
@@ -96,10 +94,9 @@ class Game
       end
 
       number = player_input
+      puts `clear`
       @board.change(number, @current_player[0].symbol)
-
-      over?
-      @current_player.reverse!
+      @board.valid_move ? @current_player.reverse! : (puts 'Invalid move')
     end
   end
 end
