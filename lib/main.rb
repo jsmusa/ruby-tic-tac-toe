@@ -1,8 +1,8 @@
 class Board
   attr_reader :array, :valid_move
 
-  def initialize
-    @array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+  def initialize(array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    @array = array
     @valid_move = false
   end
 
@@ -28,8 +28,8 @@ class Board
     puts "\n\n"
   end
 
-  def full?
-    @array.flatten.none?(Integer)
+  def full?(array = @array)
+    array.flatten.none?(Integer)
   end
 end
 
@@ -44,8 +44,8 @@ end
 
 class Game
   def initialize
-    @player_one = create_player(1, 'X')
-    @player_two = create_player(2, 'O')
+    @player_one = nil
+    @player_two = nil
     @board = Board.new
     @current_player = [@player_one, @player_two]
   end
@@ -84,6 +84,9 @@ class Game
   end
 
   def play
+    @player_one = create_player(1, 'X')
+    @player_two = create_player(2, 'O')
+
     loop do
       @board.display
 
