@@ -48,13 +48,16 @@ class Game
     @player_two = create_player(2, 'O')
     @board = Board.new
     @current_player = [@player_one, @player_two]
-    @game_over = false
   end
 
   def create_player(number, symbol)
     print "Player #{number}: "
     name = gets.chomp
     Player.new(name, symbol)
+  end
+
+  def check(array)
+    array.uniq.size == 1
   end
 
   def diagonal_check(array)
@@ -67,8 +70,7 @@ class Game
   end
 
   def over?
-    @game_over = check(@board.array.transpose) || check(@board.array) ||
-                 diagonal_check(@board.array)
+    check(@board.array.transpose) || check(@board.array) || diagonal_check(@board.array)
   end
 
   def player_input
@@ -101,5 +103,5 @@ class Game
   end
 end
 
-my_game = Game.new
-my_game.play
+# my_game = Game.new
+# my_game.play
