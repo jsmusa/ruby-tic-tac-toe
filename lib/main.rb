@@ -43,11 +43,10 @@ class Player
 end
 
 class Game
-  def initialize
+  def initialize(board = Board.new)
     @player_one = nil
     @player_two = nil
-    @board = Board.new
-    @current_player = [@player_one, @player_two]
+    @board = board
   end
 
   def create_player(number, symbol)
@@ -57,7 +56,9 @@ class Game
   end
 
   def check(array)
-    array.uniq.size == 1
+    array.each { |mini_array|return true if mini_array.uniq.size == 1 }
+
+    false
   end
 
   def diagonal_check(array)
@@ -73,11 +74,11 @@ class Game
     check(@board.array.transpose) || check(@board.array) || diagonal_check(@board.array)
   end
 
-  def player_input
+  def player_input(player)
     loop do
-      puts "Enter your move, #{@current_player[0].name}:"
+      puts "Enter your move, #{player.name}:"
       number = gets.chomp
-      break number.to_i if number.match?(/[0-9]/)
+      break number.to_i if number.match?(/^[1-9]$/)
 
       puts 'Invalid input, please try again'
     end
@@ -86,22 +87,23 @@ class Game
   def play
     @player_one = create_player(1, 'X')
     @player_two = create_player(2, 'O')
+    current_player = [@player_one, @player_two]
 
     loop do
       @board.display
 
       if over?
-        puts "#{@current_player[1].name} wins!"
+        puts "#{current_player[1].name} wins!"
         break
       elsif @board.full?
         puts 'Game Over! It\'s a tie game!'
         break
       end
 
-      number = player_input
+      number = player_input(current_player[0])
       puts `clear`
-      @board.change(number, @current_player[0].symbol)
-      @board.valid_move ? @current_player.reverse! : (puts 'Invalid move')
+      @board.change(number, current_player[0].symbol)
+      @board.valid_move ? current_player.reverse! : (puts 'Invalid move')
     end
   end
 end
