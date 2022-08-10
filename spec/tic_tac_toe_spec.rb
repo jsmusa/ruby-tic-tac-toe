@@ -239,6 +239,6 @@ describe Game do
   end
 
   describe '#play' do
-    # 
+    # all methods inside are already tested
   end
 end
